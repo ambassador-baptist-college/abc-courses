@@ -165,3 +165,15 @@ function show_course_code( $title, $id ) {
     return $title;
 }
 add_filter( 'the_title', 'show_course_code', 10, 2 );
+
+// Sort archive
+function sort_courses_by_codes( $query ) {
+    if ( is_post_type_archive( 'course' ) && ! is_admin() ) {
+        $query->set( 'orderby',     'meta_value' );
+        $query->set( 'order',       'ASC' );
+        $query->set( 'meta_key',    'course_code' );
+    }
+
+    return $query;
+}
+add_filter( 'pre_get_posts', 'sort_courses_by_codes' );
