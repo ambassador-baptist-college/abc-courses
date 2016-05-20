@@ -114,17 +114,6 @@ function course_categories() {
 }
 add_action( 'init', 'course_categories', 0 );
 
-// Add custom archive template
-function get_course_archive_template( $archive_template ) {
-     global $post;
-     if ( is_post_type_archive ( 'course' ) || is_tax( 'course-category' ) ) {
-          $archive_template = dirname( __FILE__ ) . '/archive-courses.php';
-     }
-     return $archive_template;
-}
-add_filter( 'archive_template', 'get_course_archive_template' ) ;
-add_filter( 'taxonomy_archive', 'get_course_archive_template' ) ;
-
 // Use the same slug for post type and taxonomy
 function generate_course_taxonomy_rewrite_rules( $wp_rewrite ) {
     $rules = array();
@@ -157,3 +146,22 @@ function filter_course_page_title( $title, $id = NULL ) {
     return $title;
 }
 add_filter( 'custom_title', 'filter_course_page_title' );
+add_filter( 'get_the_archive_title', 'filter_course_page_title' );
+
+// Add course code to title
+function show_course_code( $title, $id ) {
+    if ( 'course' == get_post_type( $id ) && is_main_query() && ! is_admin() ) {
+        $title = '<span class="course-code">' . get_field( 'course_code' ) . ':</span> ' . $title;
+
+        if ( get_field( 'credit_hours' ) ) {
+            $title .= ' <span class="credit-hours">' . get_field( 'credit_hours' ) . ' credit hour';
+            if ( '1' != get_field( 'credit_hours' ) ) {
+                $title .= 's';
+            }
+            $title .= '</span>';
+        }
+    }
+
+    return $title;
+}
+add_filter( 'the_title', 'show_course_code', 10, 2 );
