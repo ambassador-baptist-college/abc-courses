@@ -24,6 +24,7 @@
     "grunt-contrib-uglify": "^1.0.1",
     "grunt-contrib-watch": "^1.0.0",
     "grunt-postcss": "^0.8.0",
+    "grunt-sass": "^1.2.0",
     "pixrem": "^3.0.0",
     "postcss": "^5.0.19"
   }
