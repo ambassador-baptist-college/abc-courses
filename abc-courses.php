@@ -150,7 +150,7 @@ add_filter( 'get_the_archive_title', 'filter_course_page_title' );
 
 // Add course code to title
 function show_course_code( $title, $id ) {
-    if ( 'course' == get_post_type( $id ) && is_main_query() && ! is_admin() ) {
+    if ( 'course' == get_post_type( $id ) && ! is_admin() ) {
         $title = '<span class="course-code">' . get_field( 'course_code' ) . ':</span> ' . $title;
 
         if ( get_field( 'credit_hours' ) ) {
@@ -177,3 +177,89 @@ function sort_courses_by_codes( $query ) {
     return $query;
 }
 add_filter( 'pre_get_posts', 'sort_courses_by_codes' );
+
+// Register searchform JS
+function register_course_search() {
+    wp_register_script( 'course-search', plugins_url( 'js/course-search.js', __FILE__ ), array( 'jquery' ), '1.0.0', true );
+    wp_register_style( 'course-search', plugins_url( 'css/course-search.min.css', __FILE__ ), array(), '1.0.0', true );
+}
+add_action( 'wp_enqueue_scripts', 'register_course_search' );
+
+// Handle Ajax call
+function load_course_search_results() {
+    $ajax_query = esc_attr( $_POST['query'] );
+    $ajax_query_args = array(
+        'post_type'         => 'course',
+        'post_status'       => 'publish',
+        'posts_per_page'    => -1,
+        's'                 => $ajax_query,
+    );
+    $ajax_search = new WP_Query( $ajax_query_args );
+
+    if ( $ajax_search->have_posts() ) {
+        while ( $ajax_search->have_posts() ) {
+            $ajax_search->the_post();
+            add_filter( 'the_title', 'show_course_code', 10, 2 );
+            get_template_part( 'template-parts/content', 'course' );
+        }
+    }
+    wp_reset_postdata();
+
+    exit;
+}
+add_action( 'wp_ajax_load_course_search_results', 'load_course_search_results' );
+add_action( 'wp_ajax_nopriv_load_course_search_results', 'load_course_search_results' );
+
+// Add shortcode
+function display_all_courses( $atts ) {
+    $args = shortcode_atts(
+        array(),
+        $atts
+    );
+    $shortcode_output = NULL;
+
+    // show search form
+    $shortcode_output .= '<h2>Search</h2>
+    <form class="search" name="courses" action="' . home_url( '/' ) . '">
+        <input type="search" name="s" placeholder="Search courses&hellip;" />
+        <input type="hidden" name="post_type" value="course" />
+        <input type="submit" value="Search" />
+    </form>';
+    wp_enqueue_script( 'course-search' );
+    wp_localize_script( 'course-search', 'myAjax', array( 'ajaxurl' => admin_url( 'admin-ajax.php' ) ) );
+    wp_enqueue_style( 'course-search' );
+
+    // show main content area
+    $shortcode_output .= '<section class="courses">';
+
+    // WP_Query arguments
+    $args = array (
+        'post_type'             => array( 'course' ),
+        'post_status'           => array( 'publish' ),
+        'posts_per_page'        => '-1',
+        'orderby'               => 'meta_value',
+        'order'                 => 'ASC',
+        'meta_key'              => 'course_code',
+    );
+
+    // The Query
+    $all_courses_query = new WP_Query( $args );
+
+    // The Loop
+    if ( $all_courses_query->have_posts() ) {
+        ob_start();
+        while ( $all_courses_query->have_posts() ) {
+            $all_courses_query->the_post();
+            get_template_part( 'template-parts/content', 'single' );
+        }
+        $shortcode_output .= ob_get_clean();
+    }
+
+    // Restore original Post Data
+    wp_reset_postdata();
+    $shortcode_output .= '</section>';
+
+    // return content
+    return $shortcode_output;
+}
+add_shortcode( 'all_courses', 'display_all_courses' );

@@ -1,0 +1,12 @@
+section.courses {
+    transition: all .3s ease;
+
+    &.loading {
+        &:before {
+            display: block;
+            content: 'Loading…';
+        }
+
+        > * { opacity: 0.2; }
+    }
+}
