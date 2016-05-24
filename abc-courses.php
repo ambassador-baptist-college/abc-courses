@@ -230,7 +230,7 @@ function display_all_courses( $atts ) {
     wp_enqueue_style( 'course-search' );
 
     // show main content area
-    $shortcode_output .= '<section class="courses">';
+    $shortcode_output .= '<section class="courses site-main">';
 
     // WP_Query arguments
     $args = array (
