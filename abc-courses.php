@@ -228,7 +228,7 @@ function display_all_courses( $atts ) {
     wp_localize_script( 'course-search', 'myAjax', array( 'ajaxurl' => admin_url( 'admin-ajax.php' ) ) );
 
     // show main content area
-    $shortcode_output .= '<section class="courses site-main">';
+    $shortcode_output .= '<section class="courses-container site-main">';
 
     // WP_Query arguments
     $args = array (

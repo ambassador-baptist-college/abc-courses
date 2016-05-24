@@ -5,7 +5,7 @@
             var $form = $(this),
                 $input = $('form[name="courses"] input[name="s"]'),
                 query = $input.val(),
-                $container = $('section.courses');
+                $container = $('section.courses-container');
 
             $.ajax({
                 type: 'post',
