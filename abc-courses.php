@@ -150,7 +150,7 @@ add_filter( 'get_the_archive_title', 'filter_course_page_title' );
 
 // Add course code to title
 function show_course_code( $title, $id ) {
-    if ( 'course' == get_post_type( $id ) && ! is_admin() ) {
+    if ( 'course' == get_post_type( $id ) && ! is_admin() && is_main_query() ) {
         $title = '<span class="course-code">' . get_field( 'course_code' ) . ':</span> ' . $title;
 
         if ( get_field( 'credit_hours' ) ) {
