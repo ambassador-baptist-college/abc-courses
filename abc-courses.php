@@ -217,13 +217,24 @@ function display_all_courses( $atts ) {
     );
     $shortcode_output = NULL;
 
+    // set category options
+    $category_options = array(
+        'taxonomy'  => 'course-category',
+        'echo'      => false,
+        'title_li'  => '',
+    );
+
     // show search form
     $shortcode_output .= '<h2>Search</h2>
     <form class="search" name="courses" action="' . home_url( '/' ) . '">
         <input type="search" name="s" placeholder="Search courses&hellip;" />
         <input type="hidden" name="post_type" value="course" />
         <input type="submit" value="Search" class="screen-reader-text" />
-    </form>';
+    </form>
+    <h2>Categories</h2>
+    <ul class="course-categories">' . wp_list_categories( $category_options ) . '</ul>';
+
+    // include script
     wp_enqueue_script( 'course-search' );
     wp_localize_script( 'course-search', 'myAjax', array( 'ajaxurl' => admin_url( 'admin-ajax.php' ) ) );
 
