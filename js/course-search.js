@@ -13,11 +13,17 @@
             }, 1000);
         });
 
+        // on category selection
+        $(document).on('click', '.course-categories li a', function() {
+            event.preventDefault();
+            submitForm($(this).attr('href'));
+        });
+
         // handle input
-        var submitForm = function() {
+        var submitForm = function(query) {
              var $form = $('form[name="courses"]'),
                 $input = $('form[name="courses"] input[name="s"]'),
-                query = $input.val(),
+                query = typeof query !== 'undefined' ? query : $input.val(),
                 $container = $('section.courses-container');
 
             $.ajax({
@@ -29,11 +35,11 @@
                 },
                 beforeSend: function() {
                     $input.prop('disable', true);
-                    $container.addClass('loading');
+                    $container.slideUp();
                 },
                 success: function(response) {
                     $input.prop('disable', false);
-                    $container.removeClass('loading').html(response);
+                    $container.html(response).slideDown();
                 }
             });
         }

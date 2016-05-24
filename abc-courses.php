@@ -191,10 +191,27 @@ function load_course_search_results() {
         'post_type'         => 'course',
         'post_status'       => 'publish',
         'posts_per_page'    => -1,
-        's'                 => $ajax_query,
     );
+
+    // handle categories
+    if ( strpos( $ajax_query, 'course-category' ) !== false ) {
+        $category_url_parts = explode( '/', $ajax_query );
+
+        $ajax_query_args['tax_query'] = array(
+            array(
+                'taxonomy'  => 'course-category',
+                'field'     => 'slug',
+                'terms'     => $category_url_parts[count($category_url_parts) - 2],
+            )
+        );
+    } else {
+        $ajax_query_args['s'] = $ajax_query;
+    }
+
+    // WP query
     $ajax_search = new WP_Query( $ajax_query_args );
 
+    // output posts
     if ( $ajax_search->have_posts() ) {
         while ( $ajax_search->have_posts() ) {
             $ajax_search->the_post();
@@ -202,8 +219,9 @@ function load_course_search_results() {
             get_template_part( 'template-parts/content', 'course' );
         }
     }
-    wp_reset_postdata();
 
+    // reset query and exit
+    wp_reset_postdata();
     exit;
 }
 add_action( 'wp_ajax_load_course_search_results', 'load_course_search_results' );
