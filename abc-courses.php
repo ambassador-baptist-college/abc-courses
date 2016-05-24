@@ -180,8 +180,7 @@ add_filter( 'pre_get_posts', 'sort_courses_by_codes' );
 
 // Register searchform JS
 function register_course_search() {
-    wp_register_script( 'course-search', plugins_url( 'js/course-search.js', __FILE__ ), array( 'jquery' ), '1.0.0', true );
-    wp_register_style( 'course-search', plugins_url( 'css/course-search.min.css', __FILE__ ), array(), '1.0.0', true );
+    wp_register_script( 'course-search', plugins_url( 'js/course-search.js', __FILE__ ), array( 'jquery' ), '1.1.0', true );
 }
 add_action( 'wp_enqueue_scripts', 'register_course_search' );
 
@@ -227,7 +226,6 @@ function display_all_courses( $atts ) {
     </form>';
     wp_enqueue_script( 'course-search' );
     wp_localize_script( 'course-search', 'myAjax', array( 'ajaxurl' => admin_url( 'admin-ajax.php' ) ) );
-    wp_enqueue_style( 'course-search' );
 
     // show main content area
     $shortcode_output .= '<section class="courses site-main">';
