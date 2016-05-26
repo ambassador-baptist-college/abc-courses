@@ -196,14 +196,17 @@ function load_course_search_results() {
     // handle categories
     if ( strpos( $ajax_query, 'course-category' ) !== false ) {
         $category_url_parts = explode( '/', $ajax_query );
+        $category_slug = $category_url_parts[count($category_url_parts) - 2];
 
-        $ajax_query_args['tax_query'] = array(
-            array(
-                'taxonomy'  => 'course-category',
-                'field'     => 'slug',
-                'terms'     => $category_url_parts[count($category_url_parts) - 2],
-            )
-        );
+        if ( '' != $category_slug ) {
+            $ajax_query_args['tax_query'] = array(
+                array(
+                    'taxonomy'  => 'course-category',
+                    'field'     => 'slug',
+                    'terms'     => $category_slug,
+                )
+            );
+        }
     } else {
         $ajax_query_args['s'] = $ajax_query;
     }
