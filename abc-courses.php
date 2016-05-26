@@ -230,6 +230,41 @@ function load_course_search_results() {
 add_action( 'wp_ajax_load_course_search_results', 'load_course_search_results' );
 add_action( 'wp_ajax_nopriv_load_course_search_results', 'load_course_search_results' );
 
+// Join custom fields to course search or ajax query
+function include_course_code_join( $join ) {
+    global $wpdb, $wp_query;
+
+    $join .= ' LEFT JOIN ' . $wpdb->postmeta . ' ON ' . $wpdb->posts . '.ID = ' . $wpdb->postmeta . '.post_id';
+
+    return $join;
+}
+function include_course_code_where( $where ) {
+    global $pagenow, $wpdb;
+
+    $where = preg_replace(
+        "/\(\s*" . $wpdb->posts . ".post_title\s+LIKE\s*(\'[^\']+\')\s*\)/",
+        "(" . $wpdb->posts . ".post_title LIKE $1) OR (" . $wpdb->postmeta . ".meta_value LIKE $1)",
+        $where
+    );
+
+    return $where;
+}
+function include_course_code_distinct( $where ) {
+    global $wpdb;
+
+    return "DISTINCT";
+}
+function include_course_code_if_course( $query ) {
+    // use posts_join filter only if querying course CPT
+    if ( 'course' == $query->query['post_type'] && ( is_search() || $query->query['s'] ) ) {
+
+        add_filter( 'posts_join', 'include_course_code_join' );
+        add_filter( 'posts_where', 'include_course_code_where' );
+        add_filter( 'posts_distinct', 'include_course_code_distinct' );
+    }
+}
+add_action( 'pre_get_posts', 'include_course_code_if_course' );
+
 // Add shortcode
 function display_all_courses( $atts ) {
     $args = shortcode_atts(
