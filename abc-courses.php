@@ -247,7 +247,9 @@ function display_all_courses( $atts ) {
 
     // show search form
     $shortcode_output .= '<h2>Categories</h2>
-    <ul class="course-categories">' . wp_list_categories( $category_options ) . '</ul>
+    <ul class="course-categories">
+        <li><a href="' . home_url() . '/course-category/all/">All</a></li>
+        ' . wp_list_categories( $category_options ) . '</ul>
     <h2>Search</h2>
     <form class="search" name="courses" action="' . home_url( '/' ) . '">
         <input type="search" name="s" placeholder="Live search&hellip;" />
