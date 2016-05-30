@@ -301,12 +301,15 @@ function display_all_courses( $atts ) {
 
     // WP_Query arguments
     $args = array (
-        'post_type'             => array( 'course' ),
-        'post_status'           => array( 'publish' ),
-        'posts_per_page'        => '-1',
-        'orderby'               => 'meta_value',
-        'order'                 => 'ASC',
-        'meta_key'              => 'course_code',
+        'post_type'              => array( 'course' ),
+        'post_status'            => array( 'publish' ),
+        'posts_per_page'         => '-1',
+        'orderby'                => 'meta_value',
+        'order'                  => 'ASC',
+        'meta_key'               => 'course_code',
+        'cache_results'          => true,
+        'update_post_meta_cache' => true,
+        'update_post_term_cache' => true,
     );
 
     // The Query
