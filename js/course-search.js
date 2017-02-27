@@ -1,7 +1,7 @@
 (function($){
     $(document).ready(function() {
         // on form submission
-        $(document).on('submit', 'form[name="courses"]', function() {
+        $(document).on('submit', 'form[name="courses"]', function(event) {
             event.preventDefault();
             submitForm();
         });
