@@ -236,7 +236,7 @@ function display_all_courses( $atts ) {
     );
     $course_categories = get_terms( $category_options );
 
-    $shortcode_output .= '<h2>Categories</h2><p class="course-categories">
+    $shortcode_output .= '<h2>Categories</h2><p class="course-categories courses-container">
     <a href="' . home_url() . '/course-category/all/" class="cat-filter clear-filters" data-course-category="clear">All</a>';
     foreach ( $course_categories as $course ) {
         $shortcode_output .= '<a href="' . home_url() . '/course-category/' . $course->slug . '/" class="cat-filter ' . $course->taxonomy . '-' . $course->slug . '" data-course-category="' . $course->taxonomy . '-' . $course->slug . '">' . $course->name . '</a> ';
