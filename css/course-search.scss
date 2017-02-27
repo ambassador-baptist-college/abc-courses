@@ -1,0 +1,17 @@
+.courses-container[class*="active"] {
+    .course.active { display: block; }
+    .course:not(.active) { display: none; }
+}
+
+.courses-container[class*="search-active"] {
+    .course.search-active { display: block; }
+    .course:not(.search-active) { display: none; }
+}
+
+.course-categories a {
+    display: inline-block;
+    padding: 0.333em 0.75em;
+    margin: 0 1em 1em 0;
+    border: 1px solid;
+    box-shadow: none;
+}

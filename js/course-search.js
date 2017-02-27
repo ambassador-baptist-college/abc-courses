@@ -14,9 +14,20 @@
         });
 
         // on category selection
-        $(document).on('click', '.course-categories li a', function() {
+        $(document).on('click', '.cat-filter', function(event) {
             event.preventDefault();
-            submitForm($(this).attr('href'));
+            var courseContainer = '.courses-container',
+                clearFilter = '.clear-filters',
+                thisCategory = $(this).data('course-category');
+
+            if (thisCategory == 'clear') {
+                $('.cat-filter.active:not(' + clearFilter + ')').trigger('click');
+                $(clearFilter).removeClass('active');
+            } else {
+                $('.' + thisCategory).toggleClass('active');
+                $(courseContainer).toggleClass(thisCategory + '-active');
+                $(clearFilter).addClass('active');
+            }
         });
 
         // handle input

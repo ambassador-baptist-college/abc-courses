@@ -178,9 +178,10 @@ function sort_courses_by_codes( $query ) {
 }
 add_filter( 'pre_get_posts', 'sort_courses_by_codes' );
 
-// Register searchform JS
+// Register searchform assets
 function register_course_search() {
-    wp_register_script( 'course-search', plugins_url( 'js/course-search.js', __FILE__ ), array( 'jquery' ), '1.1.0', true );
+    wp_register_script( 'course-search', plugins_url( 'js/course-search.min.js', __FILE__ ), array( 'jquery' ), '1.1.0', true );
+    wp_register_style( 'course-search', plugins_url( 'css/course-search.min.css', __FILE__ ) );
 }
 add_action( 'wp_enqueue_scripts', 'register_course_search' );
 
@@ -271,7 +272,7 @@ function display_all_courses( $atts ) {
         array(),
         $atts
     );
-    $shortcode_output = NULL;
+    $shortcode_output = '<section class="courses-shortcode">';
 
     // set category options
     $category_options = array(
@@ -279,12 +280,14 @@ function display_all_courses( $atts ) {
         'echo'      => false,
         'title_li'  => '',
     );
+    $course_categories = get_terms( $category_options );
 
-    // show search form
-    $shortcode_output .= '<h2>Categories</h2>
-    <ul class="course-categories">
-        <li><a href="' . home_url() . '/course-category/all/">All</a></li>
-        ' . wp_list_categories( $category_options ) . '</ul>
+    $shortcode_output .= '<h2>Categories</h2><p class="course-categories">
+    <a href="' . home_url() . '/course-category/all/" class="cat-filter clear-filters" data-course-category="clear">All</a>';
+    foreach ( $course_categories as $course ) {
+        $shortcode_output .= '<a href="' . home_url() . '/course-category/' . $course->slug . '/" class="cat-filter ' . $course->taxonomy . '-' . $course->slug . '" data-course-category="' . $course->taxonomy . '-' . $course->slug . '">' . $course->name . '</a> ';
+    }
+    $shortcode_output .= '</p>
     <h2>Search</h2>
     <form class="search" name="courses" action="' . home_url( '/' ) . '">
         <input type="search" name="s" placeholder="Live search&hellip;" />
@@ -293,6 +296,7 @@ function display_all_courses( $atts ) {
     </form>';
 
     // include script
+    wp_enqueue_style( 'course-search' );
     wp_enqueue_script( 'course-search' );
     wp_localize_script( 'course-search', 'myAjax', array( 'ajaxurl' => admin_url( 'admin-ajax.php' ) ) );
 
@@ -327,7 +331,8 @@ function display_all_courses( $atts ) {
 
     // Restore original Post Data
     wp_reset_postdata();
-    $shortcode_output .= '</section>';
+    $shortcode_output .= '</section>
+    </section>';
 
     // return content
     return $shortcode_output;
