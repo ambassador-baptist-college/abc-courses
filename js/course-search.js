@@ -1,5 +1,12 @@
 (function($){
     $(document).ready(function() {
+        // make :contains case-insensitive
+        $.expr[":"].contains = $.expr.createPseudo(function(arg) {
+            return function( elem ) {
+                return $(elem).text().toUpperCase().indexOf(arg.toUpperCase()) >= 0;
+            };
+        });
+
         // on form submission
         $(document).on('submit', 'form[name="courses"]', function(event) {
             event.preventDefault();
@@ -9,8 +16,8 @@
         // on typing and pause
         $(document).on('keyup', 'form[name="courses"] input[name="s"]', function() {
             delay(function(){
-                submitForm();
-            }, 1000);
+                filterCourses();
+            }, 300);
         });
 
         // on category selection
@@ -31,28 +38,18 @@
         });
 
         // handle input
-        var submitForm = function(query) {
-             var $form = $('form[name="courses"]'),
-                $input = $('form[name="courses"] input[name="s"]'),
-                query = typeof query !== 'undefined' ? query : $input.val(),
-                $container = $('section.courses-container');
+        var filterCourses = function() {
+            var searchString = $('input[name="s"]').val(),
+                validCourses = $('.course:contains("' + searchString + '")');
 
-            $.ajax({
-                type: 'post',
-                url: myAjax.ajaxurl,
-                data: {
-                    action: 'load_course_search_results',
-                    query: query
-                },
-                beforeSend: function() {
-                    $input.prop('disable', true);
-                    $container.slideUp();
-                },
-                success: function(response) {
-                    $input.prop('disable', false);
-                    $container.html(response).slideDown();
-                }
-            });
+            // add container class
+            if (searchString.length > -1) {
+                $('.courses-container').addClass('search-active');
+            }
+
+            // add course classes
+            $('.course.search-active').removeClass('search-active');
+            validCourses.addClass('search-active');
         }
 
         // debounce on keyup

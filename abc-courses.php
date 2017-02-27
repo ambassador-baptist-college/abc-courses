@@ -3,7 +3,7 @@
  * Plugin Name: ABC Courses
  * Plugin URI: https://github.com/ambassador-baptist-college/abc-courses/
  * Description: Course Titles and Descriptions
- * Version: 1.0.0
+ * Version: 1.1.0
  * Author: AndrewRMinion Design
  * Author URI: https://andrewrminion.com
  * GitHub Plugin URI: https://github.com/ambassador-baptist-college/abc-courses/
@@ -184,52 +184,6 @@ function register_course_search() {
     wp_register_style( 'course-search', plugins_url( 'css/course-search.min.css', __FILE__ ) );
 }
 add_action( 'wp_enqueue_scripts', 'register_course_search' );
-
-// Handle Ajax call
-function load_course_search_results() {
-    $ajax_query = esc_attr( $_POST['query'] );
-    $ajax_query_args = array(
-        'post_type'         => 'course',
-        'post_status'       => 'publish',
-        'posts_per_page'    => -1,
-    );
-
-    // handle categories
-    if ( strpos( $ajax_query, 'course-category' ) !== false ) {
-        $category_url_parts = explode( '/', $ajax_query );
-        $category_slug = $category_url_parts[count($category_url_parts) - 2];
-
-        if ( '' != $category_slug ) {
-            $ajax_query_args['tax_query'] = array(
-                array(
-                    'taxonomy'  => 'course-category',
-                    'field'     => 'slug',
-                    'terms'     => $category_slug,
-                )
-            );
-        }
-    } else {
-        $ajax_query_args['s'] = $ajax_query;
-    }
-
-    // WP query
-    $ajax_search = new WP_Query( $ajax_query_args );
-
-    // output posts
-    if ( $ajax_search->have_posts() ) {
-        while ( $ajax_search->have_posts() ) {
-            $ajax_search->the_post();
-            add_filter( 'the_title', 'show_course_code', 10, 2 );
-            get_template_part( 'template-parts/content', 'course' );
-        }
-    }
-
-    // reset query and exit
-    wp_reset_postdata();
-    exit;
-}
-add_action( 'wp_ajax_load_course_search_results', 'load_course_search_results' );
-add_action( 'wp_ajax_nopriv_load_course_search_results', 'load_course_search_results' );
 
 // Join custom fields to course search or ajax query
 function include_course_code_join( $join ) {
