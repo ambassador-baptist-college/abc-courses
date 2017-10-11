@@ -21,7 +21,7 @@
         });
 
         // on category selection
-        $(document).on('click', '.cat-filter', function(event) {
+        $('.cat-filter').on('click', function(event) {
             event.preventDefault();
             var courseContainer = '.courses-container',
                 clearFilter = '.clear-filters',
