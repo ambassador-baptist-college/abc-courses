@@ -211,7 +211,7 @@ function include_course_code_distinct( $where ) {
 }
 function include_course_code_if_course( $query ) {
     // use posts_join filter only if querying course CPT
-    if ( 'course' == $query->query['post_type'] && ( is_search() || $query->query['s'] ) ) {
+    if ( array_key_exists( 'post_type', $query->query ) && 'course' === $query->query['post_type'] && ( is_search() || $query->query['s'] ) ) {
 
         add_filter( 'posts_join', 'include_course_code_join' );
         add_filter( 'posts_where', 'include_course_code_where' );
